@@ -12,7 +12,7 @@ import time
 
 def main():
     creds = ServiceAccountCredentials.from_json_keyfile_name(
-        '../credentials.json')
+        'credentials.json')
     gc = gspread.authorize(creds)
 
     sh = gc.open('Bhlist')
