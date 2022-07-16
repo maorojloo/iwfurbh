@@ -10,7 +10,7 @@ import schedule
 import time
 
 
-def main():
+def main(telid):
     creds = ServiceAccountCredentials.from_json_keyfile_name(
         'credentials.json')
     gc = gspread.authorize(creds)
@@ -75,9 +75,9 @@ def main():
 
     txt = txt+'\n'+"<—ئایان لیست->"+'\n'
 
-    def telegram_bot_sendtext(bot_message):
+    def telegram_bot_sendtext(bot_message,telid):
         bot_token = '5581022067:AAEioxFbXMInJ2cUBfHpwbSaflsxVgOH2CQ'
-        bot_chatID = '109495759'
+        bot_chatID = telid
         send_text = 'https://api.telegram.org/bot' + bot_token + \
             '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
 
@@ -85,7 +85,7 @@ def main():
 
         return response.json()
     try:
-        log = str(telegram_bot_sendtext(str(txt))[
+        log = str(telegram_bot_sendtext(str(txt),telid)[
                   'ok'])+str(datetime.datetime.now())+'\n'
     except Exception as e:
         log = str(datetime.datetime.now()) + str(e)+'\n'
@@ -96,12 +96,21 @@ def main():
         file.close
 
 
+
+def send():
+    reciver_list=['77931666','109495759','134097516']
+    for reciver in reciver_list:
+        main(reciver)
+
+
+
 try:
-    schedule.every(10).seconds.do(main)
+    schedule.every(43200).seconds.do(send)
+
 except Exception as e:
     print(e)
     with open("wdfurbh_log_.txt", "a") as file:
-        file.write(e)
+        file.write(str(e))
         file.close
 
 while True:
