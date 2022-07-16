@@ -8,6 +8,7 @@ import datetime
 from datetime import date
 import schedule
 import time
+import math
 
 
 def main(telid):
@@ -46,6 +47,9 @@ def main(telid):
         delta = date_now_obj - date_bhdate_obj
         ecp = delta.days % 365
         left_day_s = 365-ecp
+        #non-leap*********
+        nl_number=math.floor((math.floor(delta.days/365))/4)
+        left_day_s+=nl_number
         ss.append(left_day_s)
         bhlist.append(ss)
 
@@ -105,7 +109,7 @@ def send():
 
 
 try:
-    schedule.every(43200).seconds.do(send)
+    schedule.every(10).seconds.do(send)
 
 except Exception as e:
     print(e)
