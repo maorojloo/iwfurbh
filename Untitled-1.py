@@ -12,6 +12,8 @@ import math
 
 
 def main(telid):
+    errorInDataBase = False
+
     creds = ServiceAccountCredentials.from_json_keyfile_name(
         'credentials.json')
     gc = gspread.authorize(creds)
@@ -39,19 +41,24 @@ def main(telid):
     bhlist = []
     # print(nowdate)
     # print(type(nowdate))
-
     for ss in list_of_lists:
-        bhdate = ss[2]
-        date_now_obj = datetime.datetime.strptime(nowdate, '%Y-%m-%d')
-        date_bhdate_obj = datetime.datetime.strptime(bhdate, '%Y-%m-%d')
-        delta = date_now_obj - date_bhdate_obj
-        ecp = delta.days % 365
-        left_day_s = 365-ecp
-        #non-leap*********
-        nl_number=math.floor((math.floor(delta.days/365))/4)
-        left_day_s+=nl_number
-        ss.append(left_day_s)
-        bhlist.append(ss)
+        try:
+            bhdate = ss[2]
+            date_now_obj = datetime.datetime.strptime(nowdate, '%Y-%m-%d')
+            date_bhdate_obj = datetime.datetime.strptime(bhdate, '%Y-%m-%d')
+            delta = date_now_obj - date_bhdate_obj
+
+            ecp = delta.days % 365.2425
+            left_day_s = 365.2425-ecp
+            left_day_s = math.floor(left_day_s)
+
+            ss.append(left_day_s)
+            bhlist.append(ss)
+
+        except:
+            errorInDataBase = True
+
+            pass
 
     bhlist_s = sorted(bhlist, key=itemgetter(3))
 
@@ -78,8 +85,10 @@ def main(telid):
         linec += 1
 
     txt = txt+'\n'+"<—ئایان لیست->"+'\n'
+    if errorInDataBase == True:
+        txt = txt+'\n'+"خطا در دیتابیس"+'\n'
 
-    def telegram_bot_sendtext(bot_message,telid):
+    def telegram_bot_sendtext(bot_message, telid):
         bot_token = '5581022067:AAEioxFbXMInJ2cUBfHpwbSaflsxVgOH2CQ'
         bot_chatID = telid
         send_text = 'https://api.telegram.org/bot' + bot_token + \
@@ -89,7 +98,7 @@ def main(telid):
 
         return response.json()
     try:
-        log = str(telegram_bot_sendtext(str(txt),telid)[
+        log = str(telegram_bot_sendtext(str(txt), telid)[
                   'ok'])+str(datetime.datetime.now())+'\n'
     except Exception as e:
         log = str(datetime.datetime.now()) + str(e)+'\n'
@@ -100,16 +109,16 @@ def main(telid):
         file.close
 
 
-
 def send():
-    reciver_list=['77931666','109495759','134097516']
+    reciver_list = ['77931666', '109495759', '134097516']
     for reciver in reciver_list:
         main(reciver)
 
 
+send()
 
 try:
-    schedule.every(10).seconds.do(send)
+    schedule.every(43200).seconds.do(send)
 
 except Exception as e:
     print(e)
