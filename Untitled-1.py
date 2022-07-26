@@ -63,7 +63,7 @@ def main(telid):
     bhlist_s = sorted(bhlist, key=itemgetter(3))
 
     def geticon(x):
-        if x <= 0:
+        if x < 0:
             return""
         if x == 0:
             return "🎊🎊🎊"
