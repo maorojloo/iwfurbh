@@ -65,7 +65,8 @@ def main(telid):
     def geticon(x):
         if x <= 0:
             return""
-
+        if x == 0:
+            return "🎊🎊🎊"
         if x < 10:
             return "🟧"
 
