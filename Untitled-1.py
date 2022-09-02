@@ -111,7 +111,7 @@ def main(telid):
 
 
 def send():
-    reciver_list = ['77931666', '109495759', '134097516']
+    reciver_list = ['77931666', '109495759', '134097516','337513902']
     for reciver in reciver_list:
         main(reciver)
 
