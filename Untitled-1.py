@@ -10,7 +10,8 @@ import schedule
 import time
 import math
 
-
+print("imruunging")
+send()
 def main(telid):
     errorInDataBase = False
 
