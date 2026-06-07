@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: birthday-bot-config
+  namespace: birthday-bot
+data:
+  GOOGLE_SHEET_CSV_URL: "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/export?format=csv&gid=0"
+  POLL_INTERVAL_SECONDS: "3"
+  REQUEST_TIMEOUT_SECONDS: "20"

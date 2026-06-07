@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: birthday-reminder
+  namespace: birthday-bot
+spec:
+  schedule: "0 9 * * *"
+  timeZone: "Asia/Tehran"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: birthday-reminder
+              image: your-registry/telegram-birthday-bot:latest
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: APP_MODE
+                  value: "reminder"
+                - name: TELEGRAM_BOT_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: birthday-bot-secret
+                      key: TELEGRAM_BOT_TOKEN
+                - name: TELEGRAM_CHAT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: birthday-bot-secret
+                      key: TELEGRAM_CHAT_ID
+                - name: GOOGLE_SHEET_CSV_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: birthday-bot-config
+                      key: GOOGLE_SHEET_CSV_URL
+                - name: REQUEST_TIMEOUT_SECONDS
+                  valueFrom:
+                    configMapKeyRef:
+                      name: birthday-bot-config
+                      key: REQUEST_TIMEOUT_SECONDS
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 250m
+                  memory: 256Mi

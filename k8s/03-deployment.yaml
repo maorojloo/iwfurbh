@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: birthday-bot
+  namespace: birthday-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: birthday-bot
+  template:
+    metadata:
+      labels:
+        app: birthday-bot
+    spec:
+      containers:
+        - name: birthday-bot
+          image: your-registry/telegram-birthday-bot:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: APP_MODE
+              value: "bot"
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: birthday-bot-secret
+                  key: TELEGRAM_BOT_TOKEN
+            - name: TELEGRAM_CHAT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: birthday-bot-secret
+                  key: TELEGRAM_CHAT_ID
+            - name: GOOGLE_SHEET_CSV_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: birthday-bot-config
+                  key: GOOGLE_SHEET_CSV_URL
+            - name: POLL_INTERVAL_SECONDS
+              valueFrom:
+                configMapKeyRef:
+                  name: birthday-bot-config
+                  key: POLL_INTERVAL_SECONDS
+            - name: REQUEST_TIMEOUT_SECONDS
+              valueFrom:
+                configMapKeyRef:
+                  name: birthday-bot-config
+                  key: REQUEST_TIMEOUT_SECONDS
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
